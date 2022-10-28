@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>TicTacToe Game</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <h1>Tic-Tac-Toe</h1>
+  <body class="content">
+    <div class="grid">
+      <div class="grid-1">
+        <div class="cell row-1" data-index="1"></div>
+        <div class="cell row-2" data-index="2"></div>
+        <div class="cell row-3" data-index="3"></div>
+      </div>
+      <div class="grid-2">
+        <div class="cell row-4" data-index="4"></div>
+        <div class="cell row-5" data-index="5"></div>
+        <div class="cell row-6" data-index="6"></div>
+      </div>
+      <div class="grid-3">
+        <div class="cell row-7" data-index="7"></div>
+        <div class="cell row-8" data-index="8"></div>
+        <div class="cell row-9" data-index="9"></div>
+      </div>
+      <div id="gameResult"></div>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.6.1.min.js"
+      integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      let numPlays = 0;
+      let gameFinished = false;
+      let currentPlayer = "X";
+      let currentPlays = {
+        X: [],
+        O: [],
+      };
+      const winningPositions = [
+        [(1, 2, 3)],
+        [(4, 5, 6)],
+        [(7, 8, 9)],
+        [(1, 4, 7)],
+        [(2, 5, 8)],
+        [(3, 6, 9)],
+        [(1, 5, 9)],
+        [(3, 5, 7)],
+      ];
+
+      $(document).ready(function () {
+        $(".cell").on("click", function () {
+          if (!gameFinished) {
+            numPlays++;
+            $(this).text(currentPlayer);
+            currentPlays[currentPlayer].push(
+              parseInt($(this).attr("data-index"))
+            );
+
+            if (isWinner()) {
+              showGameResult("win");
+            }
+
+            if (!gameFinished && isDraw()) {
+              showGameResult("draw");
+            }
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+          }
+        });
+      });
+      function playAgain() {
+        numPlays = 0;
+        gameFinished = false;
+        currentPlayer = "X";
+        currentPlays = {
+          X: [],
+          O: [],
+        };
+        $(".cell, #gameResult").text("");
+      }
+      function showGameResult(type) {
+        gameFinished = true;
+
+        if (type === "win") {
+          $("#gameResult").text("Winner is " + currentPlayer);
+        } else {
+          $("#gameResult").text("DRAW!");
+        }
+
+        $("#gameResult").append(
+          '<p id="playAgain" onclick="playAgain()">Play Again?</p>'
+        );
+      }
+      function isDraw() {
+        return numPlays === 9;
+      }
+
+      function isWinner() {
+        if (numPlays < 5) return;
+
+        for (let i = 0; i < winningPositions.length; i++) {
+          let isWinner = true;
+
+          for (let j = 0; j < winningPositions[i].length; j++) {
+            if (
+              $.inArray(winningPositions[i][j], currentPlays[currentPlayer]) < 0
+            ) {
+              isWinner = false;
+              break;
+            }
+          }
+          if (isWinner) return true;
+        }
+        return false;
+      }
+    </script>
+  </body>
+</html>
